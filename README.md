@@ -1,10 +1,16 @@
-# /pplx — Perplexity Search Skill for Claude Code
+# /pplx — Free Perplexity Search in Claude Code (No API Credits)
 
-A Claude Code slash command that turns Claude into a transparent Perplexity AI search proxy with automatic mode selection.
+A Claude Code slash command that gives you Perplexity AI search **without using API credits**. It works by controlling your browser via Chrome's remote debugging — so you search through Perplexity's web UI instead of their paid API.
+
+## Why this exists
+
+Perplexity's API costs money per query. Their Pro subscription gives you unlimited searches on the website, but the API is billed separately. This skill is a workaround: it automates your browser to search Perplexity's web interface, so you get the same results for free — using the subscription you already pay for.
+
+**TL;DR:** If you have Perplexity Pro, you're already paying for unlimited searches. This lets Claude Code use those searches instead of burning API credits.
 
 ## What it does
 
-Type `/pplx <your question>` in Claude Code to search the web via Perplexity AI. The skill automatically selects the best search mode based on your query:
+Type `/pplx <your question>` in Claude Code to search the web via Perplexity. The skill automatically selects the best search mode based on your query:
 
 | Trigger words | Mode | Use case |
 |--------------|------|----------|
@@ -13,19 +19,38 @@ Type `/pplx <your question>` in Claude Code to search the web via Perplexity AI.
 | "pro", "detailed" | `pro` | Better context, richer answers |
 | (default — simple questions) | `standard` | Quick factual lookups |
 
+## How it works
+
+1. Chrome runs with `--remote-debugging-port=9222` (allows external control)
+2. A Playwright MCP server connects to that Chrome instance
+3. When you run `/pplx`, Claude types your query into perplexity.ai and reads the response
+4. The result is passed back to you — no API key needed
+
 ## Installation
 
-### 1. Install the Perplexity MCP server
+### 1. Set up Chrome with remote debugging
 
-This skill requires the [Perplexity MCP server](https://github.com/ppl-ai/modelcontextprotocol) to be configured in Claude Code.
+Chrome needs to start with the `--remote-debugging-port=9222` flag. Add it to your Chrome shortcut or start script:
 
-```bash
-claude mcp add perplexity -- npx -y @anthropic-ai/perplexity-mcp
+**Windows:**
+```
+"C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9222
 ```
 
-Or add it manually to your MCP config with your Perplexity API key.
+**macOS:**
+```bash
+/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9222
+```
 
-### 2. Install the skill
+### 2. Install the Playwright MCP server
+
+```bash
+claude mcp add perplexity -- npx -y @anthropic-ai/playwright-mcp
+```
+
+Or use any Playwright-based MCP that connects to your Chrome instance.
+
+### 3. Install the skill
 
 **Option A: Copy the files manually**
 
@@ -40,7 +65,7 @@ curl -sL https://raw.githubusercontent.com/elliotbakke/claude-pplx-skill/main/co
 curl -sL https://raw.githubusercontent.com/elliotbakke/claude-pplx-skill/main/agents/pplx.md -o ~/.claude/agents/pplx.md
 ```
 
-### 3. Restart Claude Code
+### 4. Restart Claude Code
 
 The `/pplx` command will now be available in any project.
 
@@ -62,8 +87,11 @@ The `/pplx` command will now be available in any project.
 ## Requirements
 
 - [Claude Code](https://claude.com/claude-code) CLI
-- A Perplexity MCP server configured in Claude Code
-- Perplexity API key
+- Chrome running with `--remote-debugging-port=9222`
+- A Playwright-based MCP server connected to Chrome
+- Perplexity Pro subscription (for unlimited web searches)
+
+**No Perplexity API key needed.**
 
 ## License
 
