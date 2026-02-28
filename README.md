@@ -19,38 +19,21 @@ Type `/pplx <your question>` in Claude Code to search the web via Perplexity. Th
 | "pro", "detailed" | `pro` | Better context, richer answers |
 | (default — simple questions) | `standard` | Quick factual lookups |
 
-## How it works
+## Prerequisites
 
-1. Chrome runs with `--remote-debugging-port=9222` (allows external control)
-2. A Playwright MCP server connects to that Chrome instance
-3. When you run `/pplx`, Claude types your query into perplexity.ai and reads the response
-4. The result is passed back to you — no API key needed
+This skill is the slash command layer. It requires the **Perplexity MCP server** to do the actual searching:
+
+> **[perplexity-mcp-free](https://github.com/elliotbakke/perplexity-mcp-free)** — Set up the MCP server first. It handles Chrome automation, Playwright, and the connection to perplexity.ai.
+
+Follow the setup instructions in that repo, then come back here to install the `/pplx` command.
 
 ## Installation
 
-### 1. Set up Chrome with remote debugging
+### 1. Set up the MCP server
 
-Chrome needs to start with the `--remote-debugging-port=9222` flag. Add it to your Chrome shortcut or start script:
+Follow the instructions at **[perplexity-mcp-free](https://github.com/elliotbakke/perplexity-mcp-free)** to get the Perplexity MCP server running.
 
-**Windows:**
-```
-"C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9222
-```
-
-**macOS:**
-```bash
-/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9222
-```
-
-### 2. Install the Playwright MCP server
-
-```bash
-claude mcp add perplexity -- npx -y @anthropic-ai/playwright-mcp
-```
-
-Or use any Playwright-based MCP that connects to your Chrome instance.
-
-### 3. Install the skill
+### 2. Install the skill
 
 **Option A: Copy the files manually**
 
@@ -65,7 +48,7 @@ curl -sL https://raw.githubusercontent.com/elliotbakke/claude-pplx-skill/main/co
 curl -sL https://raw.githubusercontent.com/elliotbakke/claude-pplx-skill/main/agents/pplx.md -o ~/.claude/agents/pplx.md
 ```
 
-### 4. Restart Claude Code
+### 3. Restart Claude Code
 
 The `/pplx` command will now be available in any project.
 
@@ -87,8 +70,7 @@ The `/pplx` command will now be available in any project.
 ## Requirements
 
 - [Claude Code](https://claude.com/claude-code) CLI
-- Chrome running with `--remote-debugging-port=9222`
-- A Playwright-based MCP server connected to Chrome
+- [perplexity-mcp-free](https://github.com/elliotbakke/perplexity-mcp-free) MCP server (set up first)
 - Perplexity Pro subscription (for unlimited web searches)
 
 **No Perplexity API key needed.**
